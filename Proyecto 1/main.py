@@ -18,7 +18,7 @@ keywords = keywords_negative + keywords_neutral + keywords_positive
 dictionary = {keywords[i]: 0 for i in range(len(keywords))}
 
 # Define el score sentimental
-def suma_entradas(word):
+def emotion_vector(word):
     if word in keywords_positive:
         vector_s[0] += 1
     elif word in keywords_negative:
@@ -56,7 +56,7 @@ for tweet in tweets:
     vector_s = [0, 0, 0]
     dictionary_copy = dictionary.copy()
     for word in clean_tweet(tweet):
-        suma_entradas(word)
+        emotion_vector(word)
         matias = dictionary_copy.get(word)
         if matias is not None:
             dictionary_copy[word] += 1
