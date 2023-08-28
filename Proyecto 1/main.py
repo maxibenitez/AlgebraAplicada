@@ -57,8 +57,8 @@ for tweet in tweets:
     dictionary_copy = dictionary.copy()
     for word in clean_tweet(tweet):
         emotion_vector(word)
-        matias = dictionary_copy.get(word)
-        if matias is not None:
+        dictionary_word = dictionary_copy.get(word)
+        if dictionary_word is not None:
             dictionary_copy[word] += 1
     average = avg_feeling()
     tweet_score = score(vector_s)
