@@ -2,23 +2,8 @@ import numpy as np
 import unidecode as ud
 import re
 
-tweets = [
-    "No puedo creer la triste noticia de su fallecimiento. Una pérdida inmensa para todos nosotros.",
-    "¡Excelente trabajo en la presentación! Tu dedicación y esfuerzo son inspiradores!",
-    "¡Increíble concierto esta noche! La energía y la música me hicieron olvidar todos mis problemas...",
-    "Mi día fue un desastre total. Nada salió como lo planeé.",
-]
-
-keywords_positive = ["excelente", "inspiradores", "increible"]
-keywords_negative = ["triste", "fallecimiento", "perdida", "problemas", "desastre"]
-keywords_neutral = ["noticia", "creer", "presentacion", "noche", "musica"]
-keywords = keywords_negative + keywords_neutral + keywords_positive
-
-# Inicializamos el diccionario con todas las palabras en 0
-dictionary = {keywords[i]: 0 for i in range(len(keywords))}
-
 # Define el score sentimental
-def emotion_vector(word):
+def emotion_vector(word, vector_s):
     if word in keywords_positive:
         vector_s[0] += 1
     elif word in keywords_negative:
@@ -27,7 +12,7 @@ def emotion_vector(word):
         vector_s[1] += 1
 
 # Calcula el promedio del sentimiento de cada tweet
-def avg_feeling():
+def avg_feeling(vector_s):
     avg = np.mean(vector_s)
     avg_rounded = round(avg, 2)
     return avg_rounded
@@ -46,22 +31,39 @@ def score(vector_s):
     score = np.dot(vector_1, vector_2)
     return score
 
+tweets = [
+    "No puedo creer la triste noticia de su fallecimiento. Una pérdida inmensa para todos nosotros.",
+    "¡Excelente trabajo en la presentación! Tu dedicación y esfuerzo son inspiradores!",
+    "¡Increíble concierto esta noche! La energía y la música me hicieron olvidar todos mis problemas...",
+    "Mi día fue un desastre total. Nada salió como lo planeé.",
+]
+
+keywords_positive = ["excelente", "inspiradores", "increible"]
+keywords_negative = ["triste", "fallecimiento", "perdida", "problemas", "desastre"]
+keywords_neutral = ["noticia", "creer", "presentacion", "noche", "musica"]
+keywords = keywords_negative + keywords_neutral + keywords_positive
+
+# Inicializamos el diccionario con todas las palabras en 0
+dictionary = {keywords[i]: 0 for i in range(len(keywords))}
+
 # Inicialización para hacer un seguimiento del tweet más positivo y negativo
 tweet_more_positive = None
 tweet_more_negative = None
 max_score = float('-inf')
 min_score = float('inf')
+tweets_scores = []
 
 for tweet in tweets:
     vector_s = [0, 0, 0]
     dictionary_copy = dictionary.copy()
     for word in clean_tweet(tweet):
-        emotion_vector(word)
+        emotion_vector(word,vector_s)
         dictionary_word = dictionary_copy.get(word)
         if dictionary_word is not None:
             dictionary_copy[word] += 1
-    average = avg_feeling()
+    #average = avg_feeling(vector_s)
     tweet_score = score(vector_s)
+    tweets_scores.append(tweet_score)
 
     if tweet_score > max_score:
         max_score = tweet_score
@@ -72,9 +74,10 @@ for tweet in tweets:
 
     print("Tweet:", tweet)
     print("Vector s:", vector_s)
-    print("Promedio del sentimiento:", average)
+    print("Promedio del sentimiento:", tweet_score)
     print("El score es:", tweet_score)
-    print("---------------------------------------------")
+    print("---------------------------------------------\n")
 
 print("El tweet más positivo es:", tweet_more_positive)
 print("El tweet más negativo es:", tweet_more_negative)
+print("La calidad promedio es de:", np.mean(tweets_scores)) #No estoy muy seguro de esto.
