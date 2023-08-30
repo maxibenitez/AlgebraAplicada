@@ -10,12 +10,22 @@ def emotion_vector(word, vector_s):
         vector_s[2] += 1
     elif word in keywords_neutral:
         vector_s[1] += 1
+        
+# Define el score sentimental (Version 2)
+def emotion_vector_2(vector_s, dic_words):
+    for word in dic_words:
+        if word in keywords_positive:
+            vector_s[0] += dic_words[word]
+        elif word in keywords_negative:
+            vector_s[2] += dic_words[word]
+        elif word in keywords_neutral:
+            vector_s[1] += dic_words[word]
 
 # Calcula el promedio del sentimiento de cada tweet
-def avg_feeling(vector_s):
+def avg_vector(vector_s):
     avg = np.mean(vector_s)
-    avg_rounded = round(avg, 2)
-    return avg_rounded
+    #avg_rounded = round(avg, 2)
+    return avg
     
 # Limpia el tweet, sacando tildes, signos y mayúsculas
 def clean_tweet(tweet):
@@ -51,19 +61,21 @@ tweet_more_positive = None
 tweet_more_negative = None
 max_score = float('-inf')
 min_score = float('inf')
-tweets_scores = []
+result_mean_quality = []
 
 for tweet in tweets:
     vector_s = [0, 0, 0]
     dictionary_copy = dictionary.copy()
     for word in clean_tweet(tweet):
-        emotion_vector(word,vector_s)
+        #emotion_vector(word,vector_s)
         dictionary_word = dictionary_copy.get(word)
         if dictionary_word is not None:
             dictionary_copy[word] += 1
-    #average = avg_feeling(vector_s)
+    emotion_vector_2(vector_s, dictionary_copy)
+    result_quality = avg_vector(list(dictionary_copy.values()))
+    result_mean_quality.append(result_quality)
+    feelings_mean = avg_vector(vector_s)
     tweet_score = score(vector_s)
-    tweets_scores.append(tweet_score)
 
     if tweet_score > max_score:
         max_score = tweet_score
@@ -80,4 +92,4 @@ for tweet in tweets:
 
 print("El tweet más positivo es:", tweet_more_positive)
 print("El tweet más negativo es:", tweet_more_negative)
-print("La calidad promedio es de:", np.mean(tweets_scores)) #No estoy muy seguro de esto.
+print("La calidad promedio es de:", np.mean(result_mean_quality)) #No estoy muy seguro de esto.
