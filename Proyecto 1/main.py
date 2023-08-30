@@ -16,7 +16,13 @@ def avg_feeling(vector_s):
     avg = np.mean(vector_s)
     avg_rounded = round(avg, 2)
     return avg_rounded
-    
+
+# Calcula la calidad de los resultados
+def quality_results(vector_s, number_keywords):
+    quality = number_keywords / np.sum(vector_s) 
+    quality_rounded = round(quality, 2)
+    return quality_rounded
+
 # Limpia el tweet, sacando tildes, signos y mayúsculas
 def clean_tweet(tweet):
     cleaned_tweet = ud.unidecode(tweet.lower())
@@ -56,6 +62,7 @@ tweets_scores = []
 for tweet in tweets:
     vector_s = [0, 0, 0]
     dictionary_copy = dictionary.copy()
+        
     for word in clean_tweet(tweet):
         emotion_vector(word,vector_s)
         dictionary_word = dictionary_copy.get(word)
@@ -64,7 +71,7 @@ for tweet in tweets:
     #average = avg_feeling(vector_s)
     tweet_score = score(vector_s)
     tweets_scores.append(tweet_score)
-
+    qlt_results = quality_results(vector_s, len(keywords))
     if tweet_score > max_score:
         max_score = tweet_score
         tweet_more_positive = tweet
@@ -75,6 +82,7 @@ for tweet in tweets:
     print("Tweet:", tweet)
     print("Vector s:", vector_s)
     print("Promedio del sentimiento:", tweet_score)
+    print("Calidad de los resultados:", qlt_results)
     print("El score es:", tweet_score)
     print("---------------------------------------------\n")
 
