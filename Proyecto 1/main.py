@@ -41,6 +41,12 @@ def score(vector_s):
     score = np.dot(vector_1, vector_2)
     return score
 
+def key_words_mapper(word, keywords, vector):
+    for i in range(keywords):
+        if word is keywords[i]:
+            vector[i] += vector[i]
+            return
+
 tweets = [
     "No puedo creer la triste noticia de su fallecimiento. Una pérdida inmensa para todos nosotros.",
     "¡Excelente trabajo en la presentación! Tu dedicación y esfuerzo son inspiradores!",
@@ -54,7 +60,7 @@ keywords_neutral = ["noticia", "creer", "presentacion", "noche", "musica"]
 keywords = keywords_negative + keywords_neutral + keywords_positive
 
 # Inicializamos el diccionario con todas las palabras en 0
-dictionary = {keywords[i]: 0 for i in range(len(keywords))}
+vector = [0 for i in range(len(keywords))]
 
 # Inicialización para hacer un seguimiento del tweet más positivo y negativo
 tweet_more_positive = None
@@ -65,14 +71,10 @@ result_mean_quality = []
 
 for tweet in tweets:
     vector_s = [0, 0, 0]
-    dictionary_copy = dictionary.copy()
     for word in clean_tweet(tweet):
-        #emotion_vector(word,vector_s)
-        dictionary_word = dictionary_copy.get(word)
-        if dictionary_word is not None:
-            dictionary_copy[word] += 1
-    emotion_vector_2(vector_s, dictionary_copy)
-    result_quality = avg_vector(list(dictionary_copy.values()))
+        key_words_mapper(word, keywords, vector)
+    emotion_vector_2(vector_s, vector)
+    result_quality = avg_vector(vector)
     result_mean_quality.append(result_quality)
     feelings_mean = avg_vector(vector_s)
     tweet_score = score(vector_s)
@@ -87,6 +89,7 @@ for tweet in tweets:
     print("Tweet:", tweet)
     print("Vector s:", vector_s)
     print("Promedio del sentimiento:", tweet_score)
+    print("La calidad del tweet:", result_quality)
     print("El score es:", tweet_score)
     print("---------------------------------------------\n")
 
