@@ -42,7 +42,7 @@ def score(vector_s):
     return score
 
 def key_words_mapper(word, keywords, vector):
-    for i in range(keywords):
+    for i in range(len(keywords)):
         if word is keywords[i]:
             vector[i] += vector[i]
             return
@@ -60,7 +60,7 @@ keywords_neutral = ["noticia", "creer", "presentacion", "noche", "musica"]
 keywords = keywords_negative + keywords_neutral + keywords_positive
 
 # Inicializamos el diccionario con todas las palabras en 0
-vector = [0 for i in range(len(keywords))]
+vector = np.array([0 for i in range(len(keywords))])
 
 # Inicialización para hacer un seguimiento del tweet más positivo y negativo
 tweet_more_positive = None
@@ -70,7 +70,7 @@ min_score = float('inf')
 result_mean_quality = []
 
 for tweet in tweets:
-    vector_s = [0, 0, 0]
+    vector_s = np.array([0, 0, 0])
     for word in clean_tweet(tweet):
         key_words_mapper(word, keywords, vector)
     emotion_vector_2(vector_s, vector)
