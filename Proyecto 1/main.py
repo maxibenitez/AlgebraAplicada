@@ -13,13 +13,12 @@ def emotion_vector(vector_s, keywords, vector):
         elif word in keywords_neutral:
             vector_s[1] += vector[i]
 
-def vector_averages(result_mean_quality):
-    vector = np.sum(np.array(result_mean_quality), axis=0)
-    return [round(i / len(vector), 2) for i in vector]
-
-# Calcula el promedio del sentimiento de cada tweet
 def avg_vector(vector):
     return np.array([round(i / len(vector), 2) for i in vector])
+
+def vector_averages(result_mean_quality):
+    vector = np.sum(np.array(result_mean_quality), axis=0)
+    return avg_vector(vector)
 
 # Limpia el tweet, sacando tildes, signos y mayúsculas
 def clean_tweet(tweet):
@@ -62,14 +61,14 @@ min_score = float('inf')
 result_mean_quality = []
 
 for tweet in tweets:
-    vector = np.array([0 for i in range(len(keywords))])
+    vector_w = np.array([0 for i in range(len(keywords))])
     vector_s = np.array([0, 0, 0])
     for word in clean_tweet(tweet):
-        key_words_mapper(word, keywords, vector)
-    emotion_vector(vector_s, keywords, vector)
-    avereged_vector = avg_vector(vector)
+        key_words_mapper(word, keywords, vector_w)
+    emotion_vector(vector_s, keywords, vector_w)
+    avereged_vector = avg_vector(vector_w)
     avereged_feelings_vector = avg_vector(vector_s)
-    result_mean_quality.append(vector)
+    result_mean_quality.append(vector_w)
     tweet_score = score(vector_s)
 
     if tweet_score > max_score:
