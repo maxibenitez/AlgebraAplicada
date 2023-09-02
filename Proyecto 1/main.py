@@ -13,7 +13,7 @@ def emotion_vector(vector_s, keywords, vector_w):
         elif word in keywords_neutral:
             vector_s[1] += vector_w[i]
 
-# Dibide cada entrada del vector entre el largo del mismo (1/n * vector)
+# Divide cada entrada del vector entre el largo del mismo (1/n * vector)
 def avg_vector(vector):
     return np.array([round(i / len(vector), 2) for i in vector])
 
