@@ -2,20 +2,22 @@ import numpy as np
 import unidecode as ud
 import re
 
-# Define el score sentimental (Version 2)
-def emotion_vector(vector_s, keywords, vector):
+# Define el vector de sentimientos
+def emotion_vector(vector_s, keywords, vector_w):
     for i in range(len(keywords)):
         word = keywords[i]
         if word in keywords_positive:
-            vector_s[0] += vector[i]
+            vector_s[0] += vector_w[i]
         elif word in keywords_negative:
-            vector_s[2] += vector[i]
+            vector_s[2] += vector_w[i]
         elif word in keywords_neutral:
-            vector_s[1] += vector[i]
+            vector_s[1] += vector_w[i]
 
+# Dibide cada entrada del vector entre el largo del mismo (1/n * vector)
 def avg_vector(vector):
     return np.array([round(i / len(vector), 2) for i in vector])
 
+# Obtiene el promedio general de un vector de vectores
 def vector_averages(result_mean_quality):
     vector = np.sum(np.array(result_mean_quality), axis=0)
     return avg_vector(vector)
@@ -34,6 +36,7 @@ def score(vector_s):
     score = np.dot(vector_1, vector_2)
     return score
 
+# Inicializa el vector que contiene la informacion de las palabras que tiene l tweet (vector w)
 def key_words_mapper(word, keywords, vector):
     for i in range(len(keywords)):
         if word == keywords[i]:
@@ -47,9 +50,9 @@ tweets = [
     "Mi día fue un desastre total. Nada salió como lo planeé.",
 ]
 
-keywords_positive = ["excelente", "inspiradores", "increible"]
+keywords_positive = ["excelente", "inspiradores", "increible", "sublime"]
 keywords_negative = ["triste", "fallecimiento", "perdida", "problemas", "desastre"]
-keywords_neutral = ["noticia", "creer", "presentacion", "noche", "musica"]
+keywords_neutral = ["noticia", "creer", "presentacion", "noche", "musica", "total"]
 
 keywords = keywords_positive + keywords_neutral + keywords_negative
 
