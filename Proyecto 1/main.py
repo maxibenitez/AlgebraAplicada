@@ -52,7 +52,7 @@ tweets = [
 
 keywords_positive = ["excelente", "inspiradores", "increible", "sublime"]
 keywords_negative = ["triste", "fallecimiento", "perdida", "problemas", "desastre"]
-keywords_neutral = ["noticia", "creer", "presentacion", "noche", "musica", "total"]
+keywords_neutral = ["noticia", "creer", "presentacion", "noche", "musica", "ser"]
 
 keywords = keywords_positive + keywords_neutral + keywords_negative
 
