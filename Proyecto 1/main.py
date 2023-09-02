@@ -2,21 +2,25 @@ import numpy as np
 import unidecode as ud
 import re
 
-# Define el score sentimental
-def emotion_vector(word, vector_s):
-    if word in keywords_positive:
-        vector_s[0] += 1
-    elif word in keywords_negative:
-        vector_s[2] += 1
-    elif word in keywords_neutral:
-        vector_s[1] += 1
+# Define el score sentimental (Version 2)
+def emotion_vector(vector_s, keywords, vector):
+    for i in range(len(keywords)):
+        word = keywords[i]
+        if word in keywords_positive:
+            vector_s[0] += vector[i]
+        elif word in keywords_negative:
+            vector_s[2] += vector[i]
+        elif word in keywords_neutral:
+            vector_s[1] += vector[i]
+
+def vector_averages(result_mean_quality):
+    vector = np.sum(np.array(result_mean_quality), axis=0)
+    return [round(i / len(vector), 2) for i in vector]
 
 # Calcula el promedio del sentimiento de cada tweet
-def avg_feeling(vector_s):
-    avg = np.mean(vector_s)
-    avg_rounded = round(avg, 2)
-    return avg_rounded
-    
+def avg_vector(vector):
+    return np.array([round(i / len(vector), 2) for i in vector])
+
 # Limpia el tweet, sacando tildes, signos y mayúsculas
 def clean_tweet(tweet):
     cleaned_tweet = ud.unidecode(tweet.lower())
@@ -31,9 +35,15 @@ def score(vector_s):
     score = np.dot(vector_1, vector_2)
     return score
 
+def key_words_mapper(word, keywords, vector):
+    for i in range(len(keywords)):
+        if word == keywords[i]:
+            vector[i] += 1
+            return
+
 tweets = [
     "No puedo creer la triste noticia de su fallecimiento. Una pérdida inmensa para todos nosotros.",
-    "¡Excelente trabajo en la presentación! Tu dedicación y esfuerzo son inspiradores!",
+    "¡Excelente trabajo en la presentación! Tu dedicación y esfuerzo son inspiradores y excelente!",
     "¡Increíble concierto esta noche! La energía y la música me hicieron olvidar todos mis problemas...",
     "Mi día fue un desastre total. Nada salió como lo planeé.",
 ]
@@ -41,29 +51,26 @@ tweets = [
 keywords_positive = ["excelente", "inspiradores", "increible"]
 keywords_negative = ["triste", "fallecimiento", "perdida", "problemas", "desastre"]
 keywords_neutral = ["noticia", "creer", "presentacion", "noche", "musica"]
-keywords = keywords_negative + keywords_neutral + keywords_positive
 
-# Inicializamos el diccionario con todas las palabras en 0
-dictionary = {keywords[i]: 0 for i in range(len(keywords))}
+keywords = keywords_positive + keywords_neutral + keywords_negative
 
 # Inicialización para hacer un seguimiento del tweet más positivo y negativo
 tweet_more_positive = None
 tweet_more_negative = None
 max_score = float('-inf')
 min_score = float('inf')
-tweets_scores = []
+result_mean_quality = []
 
 for tweet in tweets:
-    vector_s = [0, 0, 0]
-    dictionary_copy = dictionary.copy()
+    vector = np.array([0 for i in range(len(keywords))])
+    vector_s = np.array([0, 0, 0])
     for word in clean_tweet(tweet):
-        emotion_vector(word,vector_s)
-        dictionary_word = dictionary_copy.get(word)
-        if dictionary_word is not None:
-            dictionary_copy[word] += 1
-    #average = avg_feeling(vector_s)
+        key_words_mapper(word, keywords, vector)
+    emotion_vector(vector_s, keywords, vector)
+    avereged_vector = avg_vector(vector)
+    avereged_feelings_vector = avg_vector(vector_s)
+    result_mean_quality.append(vector)
     tweet_score = score(vector_s)
-    tweets_scores.append(tweet_score)
 
     if tweet_score > max_score:
         max_score = tweet_score
@@ -74,10 +81,11 @@ for tweet in tweets:
 
     print("Tweet:", tweet)
     print("Vector s:", vector_s)
-    print("Promedio del sentimiento:", tweet_score)
+    print("Promedio del sentimiento:", avereged_feelings_vector)
+    print("La calidad del tweet:", avereged_vector)
     print("El score es:", tweet_score)
     print("---------------------------------------------\n")
 
 print("El tweet más positivo es:", tweet_more_positive)
 print("El tweet más negativo es:", tweet_more_negative)
-print("La calidad promedio es de:", np.mean(tweets_scores)) #No estoy muy seguro de esto.
+print("La calidad promedio es de:", vector_averages(result_mean_quality))
