@@ -6,6 +6,7 @@ def create_equation_system(matrix):
     
     for index_y, B in enumerate(matrix):
         for index_x, _ in enumerate(B):
+            #TODO ESTO LO PONDRIA EN UNA FUNCION APARTE PARA QUE 1) SE ENTIENDA MEJOR 2) EL METODO SEA COHESIVO 3) SE PUEDA SUSTITUIR FACIL LA LOGICA
             zero_matrix = np.zeros((matrix_size, matrix_size))
             possible_changes = [(index_x, index_y), (index_x + 1, index_y), (index_x, index_y + 1), (index_x - 1, index_y), (index_x, index_y - 1)]
             
