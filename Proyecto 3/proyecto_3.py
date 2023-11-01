@@ -58,8 +58,10 @@ def lights_out_solver(initial_state):
     return solution_vector
 
 # Ejemplo
-initial_state = np.array([[0, 1, 0],
-                        [1, 1, 0],
-                        [0, 0, 1]])
+initial_state = np.array([[1, 1, 1, 0, 1],
+                        [1, 1, 0, 0, 0],
+                        [1, 1, 0, 1, 0],
+                        [1, 1, 1, 0, 0],
+                        [0, 1, 0, 1, 0]])
 solution = lights_out_solver(initial_state)
 print("Vector solución:", solution)
